@@ -20,10 +20,6 @@ data_file = 'BitCoin_Daily_Close.csv'
 
 
 
-
-
-
-
 ##########################################################################################################
 # utility functions
 #########################################################################################################
@@ -115,10 +111,10 @@ def probability_today_given_tomorrow(input):
         
         n = list(uniques)[i]
 
-        for j in range(len(data)-1):
+        for j in range(len(input)-1):
 
-            if data[j] == n:
-                edges.append( (n, data[j+1]) )
+            if input[j] == n:
+                edges.append( (n, input[j+1]) )
                 
                
     # count times each edge occurs
@@ -202,35 +198,31 @@ def get_predictions(s, p):
 # build probabilities from input data
 # predictions based on probabilities
 ######################################################################################################
-
-# read in data 
-data  = read_data(data_file)
-
-
-# calculate probabilities of any movement on a given day
-prob = probability_movement(data)
-
-# calculate the probability of today's movement based on tomorrow's using historical data
-prob_today_given_tomorrow = probability_today_given_tomorrow(data)
-print(prob_today_given_tomorrow)
+if __name__ == '__main__':
+    # read in data 
+    data  = read_data(data_file)
 
 
-# now run forward
-predictions = make_predictions(prob, prob, prob_today_given_tomorrow)
+    # calculate probabilities of any movement on a given day
+    prob = probability_movement(data)
+
+    # calculate the probability of today's movement based on tomorrow's using historical data
+    prob_today_given_tomorrow = probability_today_given_tomorrow(data)
+    print(prob_today_given_tomorrow)
+
+
+    # now run forward
+    predictions = make_predictions(prob, prob, prob_today_given_tomorrow)
 
 
 
-# print out predictions in a useful format
-for s in states:
+    # print out predictions in a useful format
+    for s in states:
 
-    p, t = get_predictions(s, predictions)
-    
-    print('-------------------------')
-    print("if today's movement %s , then tomorrow's prediction "% s)
-    for i in range(len(p)):
+        p, t = get_predictions(s, predictions)
         
-        print('Movement:  %s  %.4lf%%' % (p[i][0], p[i][1]/t * 100.))
-        
-    
-    
-    
+        print('-------------------------')
+        print("if today's movement %s , then tomorrow's prediction "% s)
+        for i in range(len(p)):
+            
+            print('Movement:  %s  %.4lf%%' % (p[i][0], p[i][1]/t * 100.))
